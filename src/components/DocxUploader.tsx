@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import type { UploadDoc } from '../type/document';
+import { readDocx } from '../lib/docsReader';
+import { getDocumentXml, openDocx } from '../lib/docxParser';
 
 const DocxUploader = () => {
     const [document, setDocument] = useState<UploadDoc | null>(null);
 
-    const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleUpload = async(e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
         if (!file.name.endsWith(".docx")) {
@@ -17,6 +19,10 @@ const DocxUploader = () => {
             size: file.size,
             type: file.type
         })
+        const buffer = await readDocx(file);
+        const zip = openDocx(buffer);
+        const xml = getDocumentXml(zip);
+        console.log(xml);
     }
     return (
         <div className="max-w-xl mx-auto mt-10 rounded-lg border border-gray-300 bg-white p-6 shadow-md">
