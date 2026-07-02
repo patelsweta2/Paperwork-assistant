@@ -1,0 +1,88 @@
+import { useState } from 'react';
+import type { UploadDoc } from '../type/document';
+
+const DocxUploader = () => {
+    const [document, setDocument] = useState<UploadDoc | null>(null);
+
+    const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        if (!file.name.endsWith(".docx")) {
+            alert("Upload only DOCX file");
+            return;
+        }
+        setDocument({
+            file,
+            fileName: file.name,
+            size: file.size,
+            type: file.type
+        })
+    }
+    return (
+        <div className="max-w-xl mx-auto mt-10 rounded-lg border border-gray-300 bg-white p-6 shadow-md">
+
+            <h2 className="mb-4 text-2xl font-semibold">
+                Upload DOCX Template
+            </h2>
+
+            <label
+                htmlFor="doc-upload"
+                className="inline-block cursor-pointer rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+            >
+                Upload Template
+            </label>
+
+            <input
+                id="doc-upload"
+                type="file"
+                accept=".docx"
+                onChange={handleUpload}
+                className="hidden"
+            />
+
+            {!document && (
+                <p className="mt-4 text-gray-500">
+                    No template uploaded
+                </p>
+            )}
+
+            {document && (
+                <div className="mt-6 rounded-md bg-gray-100 p-4">
+
+                    <p className="font-semibold text-green-600">
+                        ✅ Template Uploaded Successfully
+                    </p>
+
+                    <div className="mt-3 space-y-2 text-sm">
+
+                        <p>
+                            <span className="font-semibold">
+                                File Name:
+                            </span>{" "}
+                            {document.fileName}
+                        </p>
+
+                        <p>
+                            <span className="font-semibold">
+                                Size:
+                            </span>{" "}
+                            {(document.size / 1024).toFixed(2)} KB
+                        </p>
+
+                        <p className="break-all">
+                            <span className="font-semibold">
+                                Type:
+                            </span>{" "}
+                            {document.type}
+                        </p>
+
+                    </div>
+
+                </div>
+            )}
+
+        </div>
+    )
+}
+
+export default DocxUploader
