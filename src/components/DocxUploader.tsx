@@ -1,14 +1,17 @@
 import { useState } from 'react';
-import { type UploadDoc } from '../type/document';
+import type { UploadDoc, Placeholder } from '../type/document';
 import { readDocx } from '../lib/docsReader';
 import { lexer } from '../lib/lexer';
 import { getDocumentXml, openDocx } from '../lib/docxParser';
 import { tokenizeXml } from '../lib/xmlTokenizer';
 import { tokensToText } from '../lib/tokenToText';
 import { parsePlaceholders } from '../lib/parsePlaceholders';
+import PlaceholderTable from "./Placeholdertable";
 
 const DocxUploader = () => {
     const [document, setDocument] = useState<UploadDoc | null>(null);
+    const [placeholders, setPlaceholders] =
+        useState<Placeholder[]>([]);
 
     const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -35,8 +38,7 @@ const DocxUploader = () => {
         const lexerTokens = lexer(text);
 
         const placeholders = parsePlaceholders(lexerTokens);
-
-        console.log(placeholders);
+        setPlaceholders(placeholders);
     }
     return (
         <div className="max-w-xl mx-auto mt-10 rounded-lg border border-gray-300 bg-white p-6 shadow-md">
@@ -100,7 +102,15 @@ const DocxUploader = () => {
 
                 </div>
             )}
+            {
+                placeholders.length > 0 && (
 
+                    <PlaceholderTable
+                        placeholders={placeholders}
+                    />
+
+                )
+            }
         </div>
     )
 }

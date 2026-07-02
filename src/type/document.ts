@@ -31,13 +31,11 @@ export interface Token {
 }
 
 export interface LexerToken {
+  type: "TEXT" | "PLACEHOLDER";
 
-    type: "TEXT" | "PLACEHOLDER";
+  value: string;
 
-    value: string;
-
-    patternType?: string;
-
+  patternType?: string;
 }
 
 export const lexer = (text: string): LexerToken[] => {
@@ -49,4 +47,18 @@ export const lexer = (text: string): LexerToken[] => {
 export interface LexerToken {
   type: "TEXT" | "PLACEHOLDER";
   value: string;
+}
+
+export interface ExcelFile {
+  file: File;
+
+  fileName: string;
+
+  size: number;
+
+  type: string;
+}
+
+export interface ExcelRow {
+  [key: string]: string | number | boolean | null;
 }
