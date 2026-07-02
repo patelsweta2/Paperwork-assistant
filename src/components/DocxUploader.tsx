@@ -1,12 +1,16 @@
 import { useState } from 'react';
-import type { UploadDoc } from '../type/document';
+import { type UploadDoc } from '../type/document';
 import { readDocx } from '../lib/docsReader';
+import { lexer } from '../lib/lexer';
 import { getDocumentXml, openDocx } from '../lib/docxParser';
+import { tokenizeXml } from '../lib/xmlTokenizer';
+import { tokensToText } from '../lib/tokenToText';
+import { parsePlaceholders } from '../lib/parsePlaceholders';
 
 const DocxUploader = () => {
     const [document, setDocument] = useState<UploadDoc | null>(null);
 
-    const handleUpload = async(e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
         if (!file.name.endsWith(".docx")) {
@@ -21,8 +25,18 @@ const DocxUploader = () => {
         })
         const buffer = await readDocx(file);
         const zip = openDocx(buffer);
-        const xml = getDocumentXml(zip);
-        console.log(xml);
+        const xml = getDocumentXml(zip)!;
+        // const doc = createTemplate(zip);
+        // const text = extractText(xml);
+        const xmlTokens = tokenizeXml(xml);
+
+        const text = tokensToText(xmlTokens);
+
+        const lexerTokens = lexer(text);
+
+        const placeholders = parsePlaceholders(lexerTokens);
+
+        console.log(placeholders);
     }
     return (
         <div className="max-w-xl mx-auto mt-10 rounded-lg border border-gray-300 bg-white p-6 shadow-md">
