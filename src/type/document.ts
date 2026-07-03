@@ -62,3 +62,9 @@ export interface ExcelFile {
 export interface ExcelRow {
   [key: string]: string | number | boolean | null;
 }
+
+export interface PlaceholderMapping {
+  placeholder: string;
+  column: string | null;
+  matched: boolean;
+}
