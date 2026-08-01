@@ -1,9 +1,15 @@
 import Docxtemplater from "docxtemplater";
 import PizZip from "pizzip";
 
+
 export const createTemplate = (zip: PizZip) => {
-    return new Docxtemplater(zip, {
-        paragraphLoop: true,
-        linebreaks: true,
-    });
+  return new Docxtemplater(zip, {
+    paragraphLoop: true,
+    linebreaks: true,
+    nullGetter: (part) => {
+      return `{${part.value}}`;
+    },
+  });
 };
+
+

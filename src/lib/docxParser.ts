@@ -18,3 +18,30 @@ export const parseXml = (xml:string) => {
         "application/xml"
     )
 }
+
+export const serializeXml = (
+    xmlDoc: XMLDocument
+): string => {
+
+    const serializer = new XMLSerializer();
+
+    return serializer.serializeToString(xmlDoc);
+};
+
+
+export const normalizePlaceholders = (zip: PizZip): PizZip => {
+  const file = zip.file("word/document.xml");
+  if (!file) return zip;
+
+  const xml = file.asText();
+
+  const normalized = xml
+    .replace(/\{\{([^{}]+)\}\}/g, "{$1}")   
+    .replace(/\$\{([^{}]+)\}/g, "{$1}")     
+    .replace(/<<([^<>]+)>>/g, "{$1}")       
+    .replace(/\[([^\[\]]+)\]/g, "{$1}");    
+
+  zip.file("word/document.xml", normalized);
+  return zip;
+};
+

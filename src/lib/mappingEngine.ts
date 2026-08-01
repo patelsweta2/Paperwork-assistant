@@ -5,16 +5,16 @@ export const autoMap = (
   headers: string[],
 ): PlaceholderMapping[] => {
   return placeholders.map((placeholder) => {
-    const column = headers.find(
-      (header) =>
-        header.trim().toLowerCase() === placeholder.name.trim().toLowerCase(),
-    );
+    const column =
+      headers.find(
+        (header) =>
+          header.trim().toLowerCase() === placeholder.name.trim().toLowerCase(),
+      ) ?? null;
 
     return {
       placeholder: placeholder.name,
-      column: column ?? null,
-
-      matched: column !== undefined,
+      column,
+      matched: column !== null,
     };
   });
 };

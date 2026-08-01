@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import type { Placeholder } from '../type/document';
 
 interface Props {

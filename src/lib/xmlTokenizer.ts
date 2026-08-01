@@ -1,9 +1,10 @@
 import type { Token } from "../type/document";
 
 export const tokenizeXml = (xml: string): Token[] => {
-
+    // browser in-built parser has been create
     const parser = new DOMParser();
-
+    
+    // it converts xml string into DOM tree
     const xmlDoc = parser.parseFromString(
         xml,
         "application/xml"

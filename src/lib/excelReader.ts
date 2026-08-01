@@ -1,8 +1,9 @@
 import * as XLSX from "xlsx";
+import type { ExcelRow } from "../type/document";
 
 export const readExcel = async (file: File): Promise<ArrayBuffer> => {
   return await file.arrayBuffer();
-};
+}; 
 
 export const openWorkbook = (buffer: ArrayBuffer) => {
   return XLSX.read(buffer, {
@@ -19,5 +20,5 @@ export const getFirstSheet = (workbook: XLSX.WorkBook) => {
 
 // Sheet --> JSON
 export const sheetToJson = (sheet: XLSX.WorkSheet) => {
-  return XLSX.utils.sheet_to_json(sheet);
+  return XLSX.utils.sheet_to_json<ExcelRow>(sheet);
 };

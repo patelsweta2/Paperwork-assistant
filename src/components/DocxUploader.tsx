@@ -6,16 +6,16 @@ import { getDocumentXml, openDocx } from '../lib/docxParser';
 import { tokenizeXml } from '../lib/xmlTokenizer';
 import { tokensToText } from '../lib/tokenToText';
 import { parsePlaceholders } from '../lib/parsePlaceholders';
-import PlaceholderTable from "./Placeholdertable";
-
+import PlaceholderTable from "./PlaceholderTable";
 
 interface Props {
-    onPlaceholdersExtracted: (
+    onTemplateLoaded: (
+        buffer: ArrayBuffer,
         placeholders: Placeholder[]
     ) => void;
 }
 
-const DocxUploader = ({ onPlaceholdersExtracted }: Props) => {
+const DocxUploader = ({ onTemplateLoaded }: Props) => {
     const [document, setDocument] = useState<UploadDoc | null>(null);
     const [placeholders, setPlaceholders] = useState<Placeholder[]>([]);
 
@@ -26,42 +26,47 @@ const DocxUploader = ({ onPlaceholdersExtracted }: Props) => {
             alert("Upload only DOCX file");
             return;
         }
+
         setDocument({
             file,
             fileName: file.name,
             size: file.size,
             type: file.type
-        })
+        });
+
         const buffer = await readDocx(file);
+        console.log("Buffer :", buffer)
         const zip = openDocx(buffer);
         const xml = getDocumentXml(zip)!;
-        // const doc = createTemplate(zip);
-        // const text = extractText(xml);
+
+        // console.log(xml.includes("{Job Title}"));
+        // console.log(xml.includes("{Employee Name}"));
+        // console.log(xml.includes("{{Company Name}}"));
+
+        // const index = xml.indexOf("[Job Title]");
+        // console.log(xml.slice(index - 100, index + 100));
+
         const xmlTokens = tokenizeXml(xml);
-
         const text = tokensToText(xmlTokens);
-
         const lexerTokens = lexer(text);
-
+        console.log("lexerTokens: ", lexerTokens)
         const placeholders = parsePlaceholders(lexerTokens);
-        onPlaceholdersExtracted(placeholders);
-        setPlaceholders(placeholders)
+        // console.log("placeholders :", placeholders)
 
-    }
+        setPlaceholders(placeholders);
+
+        onTemplateLoaded(buffer, placeholders);
+    };
+
     return (
         <div className="max-w-xl mx-auto mt-10 rounded-lg border border-gray-300 bg-white p-6 shadow-md">
-
-            <h2 className="mb-4 text-2xl font-semibold">
-                Upload DOCX Template
-            </h2>
-
+            <h2 className="mb-4 text-2xl font-semibold">Upload DOCX Template</h2>
             <label
                 htmlFor="doc-upload"
                 className="inline-block cursor-pointer rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
             >
                 Upload Template
             </label>
-
             <input
                 id="doc-upload"
                 type="file"
@@ -71,56 +76,25 @@ const DocxUploader = ({ onPlaceholdersExtracted }: Props) => {
             />
 
             {!document && (
-                <p className="mt-4 text-gray-500">
-                    No template uploaded
-                </p>
+                <p className="mt-4 text-gray-500">No template uploaded</p>
             )}
 
             {document && (
                 <div className="mt-6 rounded-md bg-gray-100 p-4">
-
-                    <p className="font-semibold text-green-600">
-                        ✅ Template Uploaded Successfully
-                    </p>
-
+                    <p className="font-semibold text-green-600">✅ Template Uploaded Successfully</p>
                     <div className="mt-3 space-y-2 text-sm">
-
-                        <p>
-                            <span className="font-semibold">
-                                File Name:
-                            </span>{" "}
-                            {document.fileName}
-                        </p>
-
-                        <p>
-                            <span className="font-semibold">
-                                Size:
-                            </span>{" "}
-                            {(document.size / 1024).toFixed(2)} KB
-                        </p>
-
-                        <p className="break-all">
-                            <span className="font-semibold">
-                                Type:
-                            </span>{" "}
-                            {document.type}
-                        </p>
-
+                        <p><span className="font-semibold">File Name:</span> {document.fileName}</p>
+                        <p><span className="font-semibold">Size:</span> {(document.size / 1024).toFixed(2)} KB</p>
+                        <p className="break-all"><span className="font-semibold">Type:</span> {document.type}</p>
                     </div>
-
                 </div>
             )}
-            {
-                placeholders.length > 0 && (
 
-                    <PlaceholderTable
-                        placeholders={placeholders}
-                    />
-
-                )
-            }
+            {placeholders.length > 0 && (
+                <PlaceholderTable placeholders={placeholders} />
+            )}
         </div>
-    )
-}
+    );
+};
 
-export default DocxUploader
+export default DocxUploader;

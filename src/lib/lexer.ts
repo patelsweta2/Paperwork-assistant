@@ -1,21 +1,33 @@
 import type { LexerToken } from "../type/document";
 import { PLACEHOLDER_PATTERNS } from "../constants/placeholderPatterns";
-import { findMatchingPattern } from "./findPattern";
+import type { PlaceholderPattern } from "../type/document";
+
+const findMatchingPattern = (
+    text: string,
+    index: number,
+    patterns: PlaceholderPattern[]
+): PlaceholderPattern | null => {
+
+    for (const pattern of patterns) {
+
+        if (
+            text.startsWith(
+                pattern.start,
+                index
+            )
+        ) {
+            return pattern;
+        }
+    }
+    return null;
+}
 
 export const lexer = (text: string): LexerToken[] => {
   const tokens: LexerToken[] = [];
-
   let buffer = "";
-
   let i = 0;
-
   while (i < text.length) {
     const pattern = findMatchingPattern(text, i, PLACEHOLDER_PATTERNS);
-    // console.log("lexer :",{
-    //   index: i,
-    //   char: text[i],
-    //   pattern,
-    // });
 
     if (pattern) {
       if (buffer) {
@@ -56,7 +68,6 @@ export const lexer = (text: string): LexerToken[] => {
   if (buffer) {
     tokens.push({
       type: "TEXT",
-
       value: buffer,
     });
   }

@@ -57,9 +57,9 @@ const ExcelUploader = ({ onExcelLoaded }: Props) => {
 
         const rows = sheetToJson(sheet);
 
+        // console.log("rows :", rows);
         const headers = extractHeaders(rows);
         onExcelLoaded(rows, headers)
-        console.log(headers);
 
     };
 

@@ -29,7 +29,6 @@ export const tokensToText = (
         }
 
     }
-
     return text;
 
 }
