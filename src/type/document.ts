@@ -68,3 +68,8 @@ export interface PlaceholderMapping {
   column: string | null;
   matched: boolean;
 }
+
+export type Mapping = {
+  placeholder: string;
+  header: string;
+};

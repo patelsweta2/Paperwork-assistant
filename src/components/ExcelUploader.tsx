@@ -4,7 +4,7 @@ import { getFirstSheet, openWorkbook, readExcel, sheetToJson } from "../lib/exce
 import { extractHeaders } from "../lib/excelParser";
 
 interface Props {
-
+    hasTemplate: boolean;
     onExcelLoaded: (
 
         rows: ExcelRow[],
@@ -15,7 +15,7 @@ interface Props {
 
 }
 
-const ExcelUploader = ({ onExcelLoaded }: Props) => {
+const ExcelUploader = ({ hasTemplate, onExcelLoaded }: Props) => {
 
     const [excel, setExcel] = useState<ExcelFile | null>(null);
 
@@ -72,8 +72,10 @@ const ExcelUploader = ({ onExcelLoaded }: Props) => {
             </h2>
 
             <label
-                htmlFor="excel-upload"
-                className="inline-block cursor-pointer rounded-md bg-green-600 px-4 py-2 text-white hover:bg-green-700 transition"
+                htmlFor={hasTemplate ? "excel-upload" : undefined}
+                className={`inline-block cursor-pointer rounded-md px-4 py-2 text-white transition ${hasTemplate ? "cursor-pointer bg-green-600 hover:bg-green-700"
+                    : "cursor-not-allowed bg-gray-400"
+                    }`}
             >
                 Upload Excel
             </label>
@@ -84,7 +86,15 @@ const ExcelUploader = ({ onExcelLoaded }: Props) => {
                 accept=".xlsx,.xls"
                 onChange={handleUpload}
                 className="hidden"
+                disabled={!hasTemplate}
             />
+            {
+                !hasTemplate && (
+                    <p className="mt-2 text-sm text-red-500">
+                        Please upload a DOCX template first.
+                    </p>
+                )
+            }
 
             {!excel && (
                 <p className="mt-4 text-gray-500">

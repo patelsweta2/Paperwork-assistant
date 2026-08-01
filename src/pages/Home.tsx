@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { saveAs } from "file-saver";
-
+import { getCurrentStep } from "../utils/getCurrentSteps";
 import DocxUploader from "../components/DocxUploader";
 import ExcelUploader from "../components/ExcelUploader";
-
+import AppLayout from "../../layout/AppLayout";
 import type { ExcelRow, Placeholder } from "../type/document";
-
 import { autoMap } from "../lib/mappingEngine";
 import { buildReplacementMap } from "../lib/replacementEngine";
 import { normalizePlaceholders, openDocx } from "../lib/docxParser";       // ✅ fresh zip banane ke liye
 import { createTemplate } from "../lib/docxTemplate"; // ✅ fresh instance ke liye
 import JSZip from "jszip";
+import Hero from "../components/hero/Hero";
 
 const Home = () => {
   const [templateBuffer, setTemplateBuffer] = useState<ArrayBuffer | null>(null);
@@ -33,14 +33,12 @@ const Home = () => {
       alert("Please upload an Excel file.");
       return;
     }
-   
-
     try {
-      const bundleZip  = new JSZip()
+      const bundleZip = new JSZip()
       for (const [index, row] of rows.entries()) {
-        const docxZip  = openDocx(templateBuffer);
-        normalizePlaceholders(docxZip );
-        const freshDoc = createTemplate(docxZip );
+        const docxZip = openDocx(templateBuffer);
+        normalizePlaceholders(docxZip);
+        const freshDoc = createTemplate(docxZip);
         const replacementMap = buildReplacementMap(mappings, row);
         freshDoc.render(replacementMap);
         const blob = freshDoc.getZip().generate({
@@ -64,16 +62,25 @@ const Home = () => {
     }
   };
 
+
+  const currentStep = getCurrentStep({
+    templateBuffer,
+    rows,
+    mappings,
+  });
+
   return (
-    <div className="mx-auto max-w-6xl space-y-8 p-8">
+    <AppLayout currentStep={currentStep}>
+      <Hero/>
       <DocxUploader
         onTemplateLoaded={(buffer, extractedPlaceholders) => {
-          setTemplateBuffer(buffer);           // ✅ buffer store
+          setTemplateBuffer(buffer);
           setPlaceholders(extractedPlaceholders);
         }}
       />
 
       <ExcelUploader
+        hasTemplate={!!templateBuffer}
         onExcelLoaded={(excelRows, excelHeaders) => {
           setRows(excelRows);
           setHeaders(excelHeaders);
@@ -90,7 +97,7 @@ const Home = () => {
           </button>
         </div>
       )}
-    </div>
+    </AppLayout>
   );
 };
 
