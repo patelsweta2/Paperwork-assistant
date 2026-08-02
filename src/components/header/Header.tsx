@@ -13,10 +13,10 @@ const navItems = [
         label: "Upload Excel",
         id: "upload-excel",
     },
-    {
-        label: "Mapping",
-        id: "mapping",
-    },
+    // {
+    //     label: "Mapping",
+    //     id: "mapping",
+    // },
     {
         label: "Generate",
         id: "generate",
@@ -73,7 +73,7 @@ export default function Header({
                                 disabled={isDisabled}
                                 onClick={() => scrollToSection(item.id)}
                                 className={`
-                  flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-all
+                  flex items-center gap-2 rounded-md px-3 py-2 text-sm cursor-pointer font-medium transition-all
                   ${isCompleted
                                         ? "text-green-600 hover:text-green-700"
                                         : isActive

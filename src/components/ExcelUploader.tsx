@@ -5,80 +5,98 @@ import { extractHeaders } from "../lib/excelParser";
 
 interface Props {
     hasTemplate: boolean;
-    onExcelLoaded: (
-
-        rows: ExcelRow[],
-
-        headers: string[]
-
-    ) => void;
-
+    onExcelLoaded: (rows: ExcelRow[], headers: string[]) => void;
 }
 
 const ExcelUploader = ({ hasTemplate, onExcelLoaded }: Props) => {
-
     const [excel, setExcel] = useState<ExcelFile | null>(null);
 
-    const handleUpload = async (
-        e: React.ChangeEvent<HTMLInputElement>
-    ) => {
-
+    const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-
         if (!file) return;
 
-        if (
-            !file.name.endsWith(".xlsx") &&
-            !file.name.endsWith(".xls")
-        ) {
-
+        if (!file.name.endsWith(".xlsx") && !file.name.endsWith(".xls")) {
             alert("Upload only Excel file");
-
             return;
-
         }
 
         setExcel({
-
             file,
-
             fileName: file.name,
-
             size: file.size,
-
             type: file.type,
-
         });
+
         const buffer = await readExcel(file);
-
         const workbook = openWorkbook(buffer);
-
         const sheet = getFirstSheet(workbook);
-
         const rows = sheetToJson(sheet);
-
-        // console.log("rows :", rows);
         const headers = extractHeaders(rows);
-        onExcelLoaded(rows, headers)
-
+        onExcelLoaded(rows, headers);
     };
 
     return (
+        <div
+            className={`flex h-full flex-col rounded-lg border border-[#1A2B4C]/10 bg-white p-6 shadow-sm transition ${
+                !hasTemplate ? "opacity-50" : ""
+            }`}
+        >
+            {/* Card Header */}
+            <div className="mb-4 flex items-center justify-between">
+                <div>
+                    <p className="font-mono text-xs uppercase tracking-wide text-[#6B7280]">
+                        Step 2
+                    </p>
+                    <h2 className="mt-1 font-serif text-xl text-[#1A2B4C]">
+                        Upload Excel
+                    </h2>
+                </div>
+                {excel && (
+                    <span className="rounded-full bg-[#1A2B4C]/5 px-2 py-1 font-mono text-xs text-[#1A2B4C]">
+                        .xlsx
+                    </span>
+                )}
+            </div>
 
-        <div className="max-w-xl mx-auto mt-10 rounded-lg border border-gray-300 bg-white p-6 shadow-md">
-
-            <h2 className="mb-4 text-2xl font-semibold">
-                Upload Excel File
-            </h2>
-
-            <label
-                htmlFor={hasTemplate ? "excel-upload" : undefined}
-                className={`inline-block cursor-pointer rounded-md px-4 py-2 text-white transition ${hasTemplate ? "cursor-pointer bg-green-600 hover:bg-green-700"
-                    : "cursor-not-allowed bg-gray-400"
+            {/* Upload Zone */}
+            {!excel ? (
+                <label
+                    htmlFor={hasTemplate ? "excel-upload" : undefined}
+                    className={`flex flex-1 flex-col items-center justify-center rounded-md border-2 border-dashed px-4 py-10 text-center transition ${
+                        hasTemplate
+                            ? "cursor-pointer border-[#1A2B4C]/15 bg-[#FAF8F3] hover:border-[#E8A33D]/50 hover:bg-[#E8A33D]/5"
+                            : "cursor-not-allowed border-[#1A2B4C]/10 bg-[#FAF8F3]/50"
                     }`}
-            >
-                Upload Excel
-            </label>
+                >
+                    <span className="font-mono text-sm text-[#1A2B4C]/60">
+                        {hasTemplate ? "Click to upload .xlsx" : "Upload a template first"}
+                    </span>
+                    <span className="mt-1 text-xs text-[#6B7280]">
+                        Spreadsheet with matching data
+                    </span>
+                </label>
+            ) : (
+                <div className="flex flex-1 flex-col justify-between">
+                    <div className="rounded-md bg-[#FAF8F3] p-4">
+                        <p className="flex items-center gap-2 font-mono text-sm text-[#1A2B4C]">
+                            <span className="text-[#2F6E4E]">✓</span>
+                            {excel.fileName}
+                        </p>
+                        <p className="mt-1 text-xs text-[#6B7280]">
+                            {(excel.size / 1024).toFixed(2)} KB
+                        </p>
+                    </div>
+
+                    <div className="mt-4">
+                        <label
+                            htmlFor="excel-upload"
+                            className="cursor-pointer font-mono text-xs text-[#6B7280] underline hover:text-[#1A2B4C]"
+                        >
+                            Replace file
+                        </label>
+                    </div>
+                </div>
+            )}
 
             <input
                 id="excel-upload"
@@ -88,61 +106,8 @@ const ExcelUploader = ({ hasTemplate, onExcelLoaded }: Props) => {
                 className="hidden"
                 disabled={!hasTemplate}
             />
-            {
-                !hasTemplate && (
-                    <p className="mt-2 text-sm text-red-500">
-                        Please upload a DOCX template first.
-                    </p>
-                )
-            }
-
-            {!excel && (
-                <p className="mt-4 text-gray-500">
-                    No Excel file uploaded
-                </p>
-            )}
-
-            {excel && (
-                <div className="mt-6 rounded-md bg-gray-100 p-4">
-
-                    <p className="font-semibold text-green-600">
-                        ✅ Excel Uploaded Successfully
-                    </p>
-
-                    <div className="mt-3 space-y-2 text-sm">
-
-                        <p>
-                            <span className="font-semibold">
-                                File Name:
-                            </span>{" "}
-                            {excel.fileName}
-                        </p>
-
-                        <p>
-                            <span className="font-semibold">
-                                Size:
-                            </span>{" "}
-                            {(excel.size / 1024).toFixed(2)} KB
-                        </p>
-
-                        <p className="break-all">
-                            <span className="font-semibold">
-                                Type:
-                            </span>{" "}
-                            {excel.type}
-                        </p>
-
-                    </div>
-
-                </div>
-            )}
-
         </div>
-
     );
-
 };
 
 export default ExcelUploader;
-
-

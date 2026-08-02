@@ -7,6 +7,7 @@ import { tokenizeXml } from '../lib/xmlTokenizer';
 import { tokensToText } from '../lib/tokenToText';
 import { parsePlaceholders } from '../lib/parsePlaceholders';
 import PlaceholderTable from "./PlaceholderTable";
+import PlaceholderModal from './PlaceholderModal';
 
 interface Props {
     onTemplateLoaded: (
@@ -18,6 +19,7 @@ interface Props {
 const DocxUploader = ({ onTemplateLoaded }: Props) => {
     const [document, setDocument] = useState<UploadDoc | null>(null);
     const [placeholders, setPlaceholders] = useState<Placeholder[]>([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -59,14 +61,70 @@ const DocxUploader = ({ onTemplateLoaded }: Props) => {
     };
 
     return (
-        <div className="max-w-xl mx-auto mt-10 rounded-lg border border-gray-300 bg-white p-6 shadow-md">
-            <h2 className="mb-4 text-2xl font-semibold">Upload DOCX Template</h2>
-            <label
-                htmlFor="doc-upload"
-                className="inline-block cursor-pointer rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-            >
-                Upload Template
-            </label>
+        <div className="flex h-full flex-col rounded-lg border border-[#1A2B4C]/10 bg-white p-6 shadow-sm">
+            {/* Card Header */}
+            <div className="mb-4 flex items-center justify-between">
+                <div>
+                    <p className="font-mono text-xs uppercase tracking-wide text-[#6B7280]">
+                        Step 1
+                    </p>
+                    <h2 className="mt-1 font-serif text-xl text-[#1A2B4C]">
+                        Upload Template
+                    </h2>
+                </div>
+                {document && (
+                    <span className="rounded-full bg-[#1A2B4C]/5 px-2 py-1 font-mono text-xs text-[#1A2B4C]">
+                        .docx
+                    </span>
+                )}
+            </div>
+
+            {/* Upload Zone */}
+            {!document ? (
+                <label
+                    htmlFor="doc-upload"
+                    className="flex flex-1 cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed border-[#1A2B4C]/15 bg-[#FAF8F3] px-4 py-10 text-center transition hover:border-[#E8A33D]/50 hover:bg-[#E8A33D]/5"
+                >
+                    <span className="font-mono text-sm text-[#1A2B4C]/60">
+                        Click to upload .docx
+                    </span>
+                    <span className="mt-1 text-xs text-[#6B7280]">
+                        Word template with {"{placeholders}"}
+                    </span>
+                </label>
+            ) : (
+                <div className="flex flex-1 flex-col justify-between">
+                    <div className="rounded-md bg-[#FAF8F3] p-4">
+                        <p className="flex items-center gap-2 font-mono text-sm text-[#1A2B4C]">
+                            <span className="text-[#2F6E4E]">✓</span>
+                            {document.fileName}
+                        </p>
+                        <p className="mt-1 text-xs text-[#6B7280]">
+                            {(document.size / 1024).toFixed(2)} KB
+                        </p>
+                    </div>
+
+                    <div className="mt-4 flex items-center justify-between gap-3">
+                        <label
+                            htmlFor="doc-upload"
+                            className="cursor-pointer font-mono text-xs text-[#6B7280] underline hover:text-[#1A2B4C]"
+                        >
+                            Replace file
+                        </label>
+
+                        {placeholders.length > 0 && (
+                            <button
+                                type="button"
+                                onClick={() => setIsModalOpen(true)}
+                                className="rounded-md border border-[#1A2B4C]/20 px-3 py-1.5 font-mono text-xs text-[#1A2B4C] transition hover:bg-[#1A2B4C]/5"
+                            >
+                                View {placeholders.length} placeholder{placeholders.length > 1 ? "s" : ""}
+                            </button>
+                        )}
+                    </div>
+                </div>
+            )}
+
             <input
                 id="doc-upload"
                 type="file"
@@ -75,24 +133,11 @@ const DocxUploader = ({ onTemplateLoaded }: Props) => {
                 className="hidden"
             />
 
-            {!document && (
-                <p className="mt-4 text-gray-500">No template uploaded</p>
-            )}
-
-            {document && (
-                <div className="mt-6 rounded-md bg-gray-100 p-4">
-                    <p className="font-semibold text-green-600">✅ Template Uploaded Successfully</p>
-                    <div className="mt-3 space-y-2 text-sm">
-                        <p><span className="font-semibold">File Name:</span> {document.fileName}</p>
-                        <p><span className="font-semibold">Size:</span> {(document.size / 1024).toFixed(2)} KB</p>
-                        <p className="break-all"><span className="font-semibold">Type:</span> {document.type}</p>
-                    </div>
-                </div>
-            )}
-
-            {placeholders.length > 0 && (
-                <PlaceholderTable placeholders={placeholders} />
-            )}
+            <PlaceholderModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                placeholders={placeholders}
+            />
         </div>
     );
 };

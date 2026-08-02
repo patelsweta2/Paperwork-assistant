@@ -1,102 +1,58 @@
 import { useState } from "react";
-import { saveAs } from "file-saver";
 import { getCurrentStep } from "../utils/getCurrentSteps";
 import DocxUploader from "../components/DocxUploader";
 import ExcelUploader from "../components/ExcelUploader";
+import GenerateSection from "../components/Generate/GenerateSections";
 import AppLayout from "../../layout/AppLayout";
 import type { ExcelRow, Placeholder } from "../type/document";
 import { autoMap } from "../lib/mappingEngine";
-import { buildReplacementMap } from "../lib/replacementEngine";
-import { normalizePlaceholders, openDocx } from "../lib/docxParser";       // ✅ fresh zip banane ke liye
-import { createTemplate } from "../lib/docxTemplate"; // ✅ fresh instance ke liye
-import JSZip from "jszip";
+import { useDocxGenerator } from "../hooks/useDocXGenerator";
 import Hero from "../components/hero/Hero";
+import Stepper from "../components/steeper/Steeper";
+import Footer from "../components/footer/Footer";
 
 const Home = () => {
   const [templateBuffer, setTemplateBuffer] = useState<ArrayBuffer | null>(null);
-
   const [placeholders, setPlaceholders] = useState<Placeholder[]>([]);
   const [headers, setHeaders] = useState<string[]>([]);
   const [rows, setRows] = useState<ExcelRow[]>([]);
+
+  const { generate, isGenerating } = useDocxGenerator();
 
   const mappings =
     placeholders.length > 0 && headers.length > 0
       ? autoMap(placeholders, headers)
       : [];
 
-  const handleGenerate = async () => {
-    if (!templateBuffer) {
-      alert("Please upload a DOCX template.");
-      return;
-    }
-    if (rows.length === 0) {
-      alert("Please upload an Excel file.");
-      return;
-    }
-    try {
-      const bundleZip = new JSZip()
-      for (const [index, row] of rows.entries()) {
-        const docxZip = openDocx(templateBuffer);
-        normalizePlaceholders(docxZip);
-        const freshDoc = createTemplate(docxZip);
-        const replacementMap = buildReplacementMap(mappings, row);
-        freshDoc.render(replacementMap);
-        const blob = freshDoc.getZip().generate({
-          type: "blob",
-          mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-          compression: "DEFLATE",
-          compressionOptions: {
-            level: 9,
-          },
-        });
-        const fileName = `document_${index + 1}.docx`;
-        const fileBuffer = await blob.arrayBuffer();
-        bundleZip.file(fileName, fileBuffer);
-      }
-      const finalZip = await bundleZip.generateAsync({ type: "blob" });
-      saveAs(finalZip, "generated_documents.zip");
-      console.log(`${rows.length} documents bundled and downloaded.`);
-    } catch (error) {
-      console.error("Generation Error:", error);
-      alert("Failed to generate document. Check console for details.");
-    }
-  };
-
-
-  const currentStep = getCurrentStep({
-    templateBuffer,
-    rows,
-    mappings,
-  });
+  const currentStep = getCurrentStep({ templateBuffer, rows });
 
   return (
     <AppLayout currentStep={currentStep}>
-      <Hero/>
-      <DocxUploader
-        onTemplateLoaded={(buffer, extractedPlaceholders) => {
-          setTemplateBuffer(buffer);
-          setPlaceholders(extractedPlaceholders);
-        }}
-      />
+      <Hero />
+      <Stepper currentStep={currentStep} />
 
-      <ExcelUploader
-        hasTemplate={!!templateBuffer}
-        onExcelLoaded={(excelRows, excelHeaders) => {
-          setRows(excelRows);
-          setHeaders(excelHeaders);
-        }}
-      />
+      <div className="mx-auto mt-10 grid max-w-4xl grid-cols-1 gap-6 px-6 md:grid-cols-2 md:px-0">
+        <DocxUploader
+          onTemplateLoaded={(buffer, extractedPlaceholders) => {
+            setTemplateBuffer(buffer);
+            setPlaceholders(extractedPlaceholders);
+          }}
+        />
+        <ExcelUploader
+          hasTemplate={!!templateBuffer}
+          onExcelLoaded={(excelRows, excelHeaders) => {
+            setRows(excelRows);
+            setHeaders(excelHeaders);
+          }}
+        />
+      </div>
 
-      {templateBuffer && rows.length > 0 && mappings.length > 0 && (
-        <div className="flex justify-center">
-          <button
-            onClick={handleGenerate}
-            className="rounded-lg bg-green-600 px-6 py-3 font-medium text-white transition hover:bg-green-700"
-          >
-            Generate DOCX
-          </button>
-        </div>
-      )}
+      <GenerateSection
+        isVisible={!!templateBuffer && rows.length > 0 && mappings.length > 0}
+        isGenerating={isGenerating}
+        onGenerate={() => generate({ templateBuffer, rows, mappings })}
+      />
+      <Footer/>
     </AppLayout>
   );
 };
