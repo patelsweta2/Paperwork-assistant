@@ -64,7 +64,7 @@ const ExcelUploader = ({ hasTemplate, onExcelLoaded }: Props) => {
                     htmlFor={hasTemplate ? "excel-upload" : undefined}
                     className={`flex flex-1 flex-col items-center justify-center rounded-md border-2 border-dashed px-4 py-10 text-center transition ${
                         hasTemplate
-                            ? "cursor-pointer border-[#1A2B4C]/15 bg-[#FAF8F3] hover:border-[#E8A33D]/50 hover:bg-[#E8A33D]/5"
+                            ? "cursor-pointer border-[#1A2B4C]/15 bg-green-50 hover:border-green-400 hover:bg-green-100"
                             : "cursor-not-allowed border-[#1A2B4C]/10 bg-[#FAF8F3]/50"
                     }`}
                 >
@@ -77,7 +77,7 @@ const ExcelUploader = ({ hasTemplate, onExcelLoaded }: Props) => {
                 </label>
             ) : (
                 <div className="flex flex-1 flex-col justify-between">
-                    <div className="rounded-md bg-[#FAF8F3] p-4">
+                    <div className="rounded-md bg-green-50 p-4">
                         <p className="flex items-center gap-2 font-mono text-sm text-[#1A2B4C]">
                             <span className="text-[#2F6E4E]">✓</span>
                             {excel.fileName}

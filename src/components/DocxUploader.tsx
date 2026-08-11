@@ -83,7 +83,7 @@ const DocxUploader = ({ onTemplateLoaded }: Props) => {
             {!document ? (
                 <label
                     htmlFor="doc-upload"
-                    className="flex flex-1 cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed border-[#1A2B4C]/15 bg-[#FAF8F3] px-4 py-10 text-center transition hover:border-[#E8A33D]/50 hover:bg-[#E8A33D]/5"
+                    className="flex flex-1 cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed border-[#1A2B4C]/15 bg-green-50 px-4 py-10 text-center transition hover:border-green-400 hover:bg-green-100"
                 >
                     <span className="font-mono text-sm text-[#1A2B4C]/60">
                         Click to upload .docx
@@ -94,7 +94,7 @@ const DocxUploader = ({ onTemplateLoaded }: Props) => {
                 </label>
             ) : (
                 <div className="flex flex-1 flex-col justify-between">
-                    <div className="rounded-md bg-[#FAF8F3] p-4">
+                    <div className="rounded-md bg-green-50 p-4">
                         <p className="flex items-center gap-2 font-mono text-sm text-[#1A2B4C]">
                             <span className="text-[#2F6E4E]">✓</span>
                             {document.fileName}

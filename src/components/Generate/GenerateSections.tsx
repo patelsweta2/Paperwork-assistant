@@ -27,7 +27,7 @@ const GenerateSection = ({ isVisible, isGenerating, rowCount, onGenerate }: Prop
         <button
           onClick={onGenerate}
           disabled={isGenerating}
-          className="flex items-center gap-2 rounded-lg bg-[#1A2B4C] px-8 py-3 font-medium text-white transition hover:bg-[#1A2B4C]/90 disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex items-center gap-2 rounded-lg bg-green-900 px-8 py-3 font-medium text-white transition hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isGenerating && (
             <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />

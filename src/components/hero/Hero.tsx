@@ -62,7 +62,7 @@ const Hero = () => {
                     initial="hidden"
                     animate={animState}
                     transition={{ duration: 0.5 }}
-                    className="mb-4 font-mono text-sm uppercase tracking-widest text-[#E8A33D]"
+                    className="mb-4 font-mono text-sm uppercase tracking-widest text-green-800"
                 >
                     Document automation, simplified
                 </motion.p>
@@ -73,7 +73,7 @@ const Hero = () => {
                     initial="hidden"
                     animate={animState}
                     transition={{ duration: 0.6, delay: 0.1 }}
-                    className="font-serif text-4xl leading-tight text-[#1A2B4C] md:text-6xl"
+                    className="font-serif text-4xl leading-tight text-green-800 md:text-6xl"
                 >
                     Your template.
                     <br />
@@ -221,7 +221,7 @@ const Hero = () => {
                     transition={{ duration: 0.5, delay: 2.2 }}
                     className="mt-14 flex justify-center"
                 >
-                    <button className="rounded-lg bg-[#1A2B4C] px-8 py-3 font-medium text-white transition hover:bg-[#1A2B4C]/90">
+                    <button className="rounded-lg bg-green-900 px-8 py-3 font-medium text-white transition hover:bg-green-800">
                         Try it with your files
                     </button>
                 </motion.div>

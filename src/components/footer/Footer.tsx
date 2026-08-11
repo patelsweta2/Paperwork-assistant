@@ -6,7 +6,7 @@ const Footer = () => {
           Your files stay in your browser — nothing is uploaded to a server.
         </p>
         <div className="flex items-center gap-4 font-mono text-xs text-[#6B7280]">
-          <a href="#" className="hover:text-[#1A2B4C]">
+          <a href="https://github.com/patelsweta2/Paperwork-assistant" className="hover:text-[#1A2B4C]">
             GitHub
           </a>
           <span>·</span>

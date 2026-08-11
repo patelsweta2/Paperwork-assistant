@@ -44,9 +44,9 @@ const Stepper = ({ currentStep, onStepClick }: StepperProps) => {
                   <span
                     className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 font-mono text-sm transition-colors duration-300 ${
                       status === "completed"
-                        ? "border-[#1A2B4C] bg-[#1A2B4C] text-white"
+                        ? "border-green-800 bg-green-800 text-white"
                         : status === "active"
-                        ? "border-[#E8A33D] bg-[#E8A33D]/10 text-[#E8A33D]"
+                        ? "border-green-700 bg-green-100 text-green-700"
                         : "border-[#1A2B4C]/20 text-[#1A2B4C]/40"
                     }`}
                   >
@@ -65,7 +65,7 @@ const Stepper = ({ currentStep, onStepClick }: StepperProps) => {
                 {index < steps.length - 1 && (
                   <div className="mx-3 h-[2px] flex-1 bg-[#1A2B4C]/10">
                     <div
-                      className="h-full bg-[#1A2B4C] transition-all duration-500 ease-out"
+                      className="h-full bg-green-800 transition-all duration-500 ease-out"
                       style={{
                         width: status === "completed" ? "100%" : "0%",
                       }}
