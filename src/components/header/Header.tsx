@@ -2,6 +2,7 @@ import { FileText, Check } from "lucide-react";
 
 type HeaderProps = {
     currentStep: number;
+    // onUploadClick: () => void;
 };
 
 const navItems = [

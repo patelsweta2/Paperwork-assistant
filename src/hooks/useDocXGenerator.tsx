@@ -5,6 +5,7 @@ import type { ExcelRow, PlaceholderMapping } from "../type/document"; // 👈 Ma
 import { normalizePlaceholders, openDocx } from "../lib/docxParser";
 import { createTemplate } from "../lib/docxTemplate";
 import { buildReplacementMap } from "../lib/replacementEngine";
+import { MAX_ROWS } from "../constants/placeholderPatterns";
 
 type Params = {
   templateBuffer: ArrayBuffer | null;
@@ -23,6 +24,12 @@ export const useDocxGenerator = () => {
     }
     if (rows.length === 0) {
       alert("Please upload an Excel file.");
+      return;
+    }
+        if (rows.length > MAX_ROWS) {   
+      alert(
+        `You can generate up to ${MAX_ROWS} documents at a time. Your file has ${rows.length} rows — please split it into smaller files.`
+      );
       return;
     }
 

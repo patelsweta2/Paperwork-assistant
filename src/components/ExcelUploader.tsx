@@ -31,15 +31,20 @@ const ExcelUploader = ({ hasTemplate, onExcelLoaded }: Props) => {
         const workbook = openWorkbook(buffer);
         const sheet = getFirstSheet(workbook);
         const rows = sheetToJson(sheet);
+
+        if (rows.length > 100) {
+            alert(`Maximum 100 rows allowed. Your file has ${rows.length} rows.`);
+            return;
+        }
+        setExcel({ file, fileName: file.name, size: file.size, type: file.type });
         const headers = extractHeaders(rows);
         onExcelLoaded(rows, headers);
     };
 
     return (
         <div
-            className={`flex h-full flex-col rounded-lg border border-[#1A2B4C]/10 bg-white p-6 shadow-sm transition ${
-                !hasTemplate ? "opacity-50" : ""
-            }`}
+            className={`flex h-full flex-col rounded-lg border border-[#1A2B4C]/10 bg-white p-6 shadow-sm transition ${!hasTemplate ? "opacity-50" : ""
+                }`}
         >
             {/* Card Header */}
             <div className="mb-4 flex items-center justify-between">
@@ -62,11 +67,10 @@ const ExcelUploader = ({ hasTemplate, onExcelLoaded }: Props) => {
             {!excel ? (
                 <label
                     htmlFor={hasTemplate ? "excel-upload" : undefined}
-                    className={`flex flex-1 flex-col items-center justify-center rounded-md border-2 border-dashed px-4 py-10 text-center transition ${
-                        hasTemplate
+                    className={`flex flex-1 flex-col items-center justify-center rounded-md border-2 border-dashed px-4 py-10 text-center transition ${hasTemplate
                             ? "cursor-pointer border-[#1A2B4C]/15 bg-green-50 hover:border-green-400 hover:bg-green-100"
                             : "cursor-not-allowed border-[#1A2B4C]/10 bg-[#FAF8F3]/50"
-                    }`}
+                        }`}
                 >
                     <span className="font-mono text-sm text-[#1A2B4C]/60">
                         {hasTemplate ? "Click to upload .xlsx" : "Upload a template first"}

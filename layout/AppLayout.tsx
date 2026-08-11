@@ -2,6 +2,7 @@ import Header from './../src/components/header/Header';
 type AppLayoutProps = {
   currentStep: number;
   children: React.ReactNode;
+  // onUploadClick: () => void;
 };
 
 export default function AppLayout({

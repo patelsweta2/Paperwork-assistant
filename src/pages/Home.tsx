@@ -26,33 +26,44 @@ const Home = () => {
 
   const currentStep = getCurrentStep({ templateBuffer, rows });
 
+
   return (
     <AppLayout currentStep={currentStep}>
       <Hero />
       <Stepper currentStep={currentStep} />
+      {/* <div id="upload-template"> */}
 
       <div className="mx-auto mt-10 grid max-w-4xl grid-cols-1 gap-6 px-6 md:grid-cols-2 md:px-0">
-        <DocxUploader
-          onTemplateLoaded={(buffer, extractedPlaceholders) => {
-            setTemplateBuffer(buffer);
-            setPlaceholders(extractedPlaceholders);
-          }}
-        />
-        <ExcelUploader
-          hasTemplate={!!templateBuffer}
-          onExcelLoaded={(excelRows, excelHeaders) => {
-            setRows(excelRows);
-            setHeaders(excelHeaders);
-          }}
+        <div id="upload-template" className="scroll-mt-24">
+
+          <DocxUploader
+            onTemplateLoaded={(buffer, extractedPlaceholders) => {
+              setTemplateBuffer(buffer);
+              setPlaceholders(extractedPlaceholders);
+            }}
+          />
+        </div>
+        <div id="upload-excel" className="scroll-mt-24">
+
+          <ExcelUploader
+            hasTemplate={!!templateBuffer}
+            onExcelLoaded={(excelRows, excelHeaders) => {
+              setRows(excelRows);
+              setHeaders(excelHeaders);
+            }}
+          />
+        </div>
+      </div>
+      <div id="generate" className="scroll-mt-24">
+        <GenerateSection
+          isVisible={!!templateBuffer && rows.length > 0 && mappings.length > 0}
+          isGenerating={isGenerating}
+          rowCount={rows.length}
+          onGenerate={() => generate({ templateBuffer, rows, mappings })}
         />
       </div>
-
-      <GenerateSection
-        isVisible={!!templateBuffer && rows.length > 0 && mappings.length > 0}
-        isGenerating={isGenerating}
-        onGenerate={() => generate({ templateBuffer, rows, mappings })}
-      />
-      <Footer/>
+      {/* </div> */}
+      <Footer />
     </AppLayout>
   );
 };
