@@ -1,8 +1,9 @@
-import { FileText, Check } from "lucide-react";
+import { FileText, Check, RotateCcw } from "lucide-react";
 
 type HeaderProps = {
     currentStep: number;
     // onUploadClick: () => void;
+    onReset: () => void;
 };
 
 const navItems = [
@@ -25,7 +26,7 @@ const navItems = [
 ] as const;
 
 export default function Header({
-    currentStep,
+    currentStep, onReset
 }: HeaderProps): React.JSX.Element {
     const scrollToSection = (id: string): void => {
         const element = document.getElementById(id);
@@ -89,6 +90,14 @@ export default function Header({
                             </button>
                         );
                     })}
+                    <button
+                        onClick={onReset}
+                        title="Start over"
+                        className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-md border border-[#1A2B4C]/15 px-3 py-2 text-sm font-medium text-[#6B7280] transition hover:border-[#1A2B4C]/30 hover:text-[#1A2B4C]"
+                    >
+                        <RotateCcw size={14} />
+                        Reset
+                    </button>
                 </nav>
             </div>
         </header>

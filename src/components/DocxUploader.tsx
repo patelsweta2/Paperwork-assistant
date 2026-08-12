@@ -6,7 +6,7 @@ import { getDocumentXml, openDocx } from '../lib/docxParser';
 import { tokenizeXml } from '../lib/xmlTokenizer';
 import { tokensToText } from '../lib/tokenToText';
 import { parsePlaceholders } from '../lib/parsePlaceholders';
-import PlaceholderTable from "./PlaceholderTable";
+import toast from "react-hot-toast";
 import PlaceholderModal from './PlaceholderModal';
 
 interface Props {
@@ -25,7 +25,7 @@ const DocxUploader = ({ onTemplateLoaded }: Props) => {
         const file = e.target.files?.[0];
         if (!file) return;
         if (!file.name.endsWith(".docx")) {
-            alert("Upload only DOCX file");
+            toast.error("Upload only DOCX file")
             return;
         }
 

@@ -36,7 +36,11 @@ const slideRight = {
     visible: { opacity: 1, x: 0 },
 };
 
-const Hero = () => {
+interface HeroProps {
+  onCtaClick: () => void;
+}
+
+const Hero = ({ onCtaClick }: HeroProps) => {
     const sectionRef = useRef(null);
     const isInView = useInView(sectionRef, { once: false, amount: 0.4 }); // 👈 once: false = replay enabled
 
@@ -221,7 +225,7 @@ const Hero = () => {
                     transition={{ duration: 0.5, delay: 2.2 }}
                     className="mt-14 flex justify-center"
                 >
-                    <button className="rounded-lg bg-green-900 px-8 py-3 font-medium text-white transition hover:bg-green-800">
+                    <button className="rounded-lg bg-green-900 cursor-pointer px-8 py-3 font-medium text-white transition hover:bg-green-800" onClick={onCtaClick}>
                         Try it with your files
                     </button>
                 </motion.div>

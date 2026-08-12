@@ -10,6 +10,7 @@ import { useDocxGenerator } from "../hooks/useDocXGenerator";
 import Hero from "../components/hero/Hero";
 import Stepper from "../components/steeper/Steeper";
 import Footer from "../components/footer/Footer";
+import toast from "react-hot-toast";
 
 const Home = () => {
   const [templateBuffer, setTemplateBuffer] = useState<ArrayBuffer | null>(null);
@@ -17,7 +18,7 @@ const Home = () => {
   const [headers, setHeaders] = useState<string[]>([]);
   const [rows, setRows] = useState<ExcelRow[]>([]);
 
-  const { generate, isGenerating } = useDocxGenerator();
+  const { generate, download, isGenerating, reset: resetGenerator, progress, generatedZip } = useDocxGenerator();
 
   const mappings =
     placeholders.length > 0 && headers.length > 0
@@ -26,10 +27,32 @@ const Home = () => {
 
   const currentStep = getCurrentStep({ templateBuffer, rows });
 
+  const scrollToUpload = () => {
+    document.getElementById("upload-template")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
+  const handleReset = () => {
+    setTemplateBuffer(null);
+    setPlaceholders([]);
+    setHeaders([]);
+    setRows([]);
+    resetGenerator();
+
+    toast.success("Ready to start a new batch!");
+
+    document.getElementById("upload-template")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
 
   return (
-    <AppLayout currentStep={currentStep}>
-      <Hero />
+    <AppLayout currentStep={currentStep} onReset={handleReset}>
+      <Hero onCtaClick={scrollToUpload} />
       <Stepper currentStep={currentStep} />
       {/* <div id="upload-template"> */}
 
@@ -58,8 +81,12 @@ const Home = () => {
         <GenerateSection
           isVisible={!!templateBuffer && rows.length > 0 && mappings.length > 0}
           isGenerating={isGenerating}
+          progress={progress}
           rowCount={rows.length}
+          isReadyToDownload={!!generatedZip}
+          onDownload={download}
           onGenerate={() => generate({ templateBuffer, rows, mappings })}
+          onReset={handleReset}
         />
       </div>
       {/* </div> */}

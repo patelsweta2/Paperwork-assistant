@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { ExcelFile, ExcelRow } from "../type/document";
 import { getFirstSheet, openWorkbook, readExcel, sheetToJson } from "../lib/excelReader";
 import { extractHeaders } from "../lib/excelParser";
+import toast from "react-hot-toast";
 
 interface Props {
     hasTemplate: boolean;
@@ -16,7 +17,7 @@ const ExcelUploader = ({ hasTemplate, onExcelLoaded }: Props) => {
         if (!file) return;
 
         if (!file.name.endsWith(".xlsx") && !file.name.endsWith(".xls")) {
-            alert("Upload only Excel file");
+            toast.error('Upload only Excel file')
             return;
         }
 
@@ -31,9 +32,15 @@ const ExcelUploader = ({ hasTemplate, onExcelLoaded }: Props) => {
         const workbook = openWorkbook(buffer);
         const sheet = getFirstSheet(workbook);
         const rows = sheetToJson(sheet);
+        console.log("Rows :", rows);
+
+        if (rows.length === 0) {
+            toast.error("This file has headers but no data rows. Please add at least one row.");
+            return;
+        }
 
         if (rows.length > 100) {
-            alert(`Maximum 100 rows allowed. Your file has ${rows.length} rows.`);
+            toast.error(`Maximum 100 rows allowed. Your file has ${rows.length} rows.`)
             return;
         }
         setExcel({ file, fileName: file.name, size: file.size, type: file.type });
@@ -68,8 +75,8 @@ const ExcelUploader = ({ hasTemplate, onExcelLoaded }: Props) => {
                 <label
                     htmlFor={hasTemplate ? "excel-upload" : undefined}
                     className={`flex flex-1 flex-col items-center justify-center rounded-md border-2 border-dashed px-4 py-10 text-center transition ${hasTemplate
-                            ? "cursor-pointer border-[#1A2B4C]/15 bg-green-50 hover:border-green-400 hover:bg-green-100"
-                            : "cursor-not-allowed border-[#1A2B4C]/10 bg-[#FAF8F3]/50"
+                        ? "cursor-pointer border-[#1A2B4C]/15 bg-green-50 hover:border-green-400 hover:bg-green-100"
+                        : "cursor-not-allowed border-[#1A2B4C]/10 bg-[#FAF8F3]/50"
                         }`}
                 >
                     <span className="font-mono text-sm text-[#1A2B4C]/60">

@@ -3,15 +3,17 @@ type AppLayoutProps = {
   currentStep: number;
   children: React.ReactNode;
   // onUploadClick: () => void;
+  onReset: () => void;
 };
 
 export default function AppLayout({
   currentStep,
+  onReset,
   children,
 }: AppLayoutProps) {
   return (
     <>
-      <Header currentStep={currentStep} />
+      <Header currentStep={currentStep} onReset={onReset}/>
 
       <main className="mx-auto max-w-6xl px-8 py-8">
         {children}
