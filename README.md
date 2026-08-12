@@ -12,7 +12,7 @@ It automates repetitive document creation by extracting placeholders, intelligen
 
 ## 🖼️ Preview
 
-![Paperwork Assistant](./public/)
+![Paperwork Assistant](./public/paperwork-assistant.png)
 
 ---
 
