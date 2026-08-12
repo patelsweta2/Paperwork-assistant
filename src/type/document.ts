@@ -38,7 +38,7 @@ export interface LexerToken {
   patternType?: string;
 }
 
-export const lexer = (text: string): LexerToken[] => {
+export const lexer = (): LexerToken[] => {
   const tokens: LexerToken[] = [];
 
   return tokens;
