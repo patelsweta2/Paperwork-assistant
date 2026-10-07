@@ -63,10 +63,13 @@ export interface ExcelRow {
   [key: string]: string | number | boolean | null;
 }
 
+export type MatchSource = "exact" | "ai" | "manual" | "none";
 export interface PlaceholderMapping {
   placeholder: string;
   column: string | null;
   matched: boolean;
+  confidence?: number;
+  source?: MatchSource;
 }
 
 export type Mapping = {

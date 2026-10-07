@@ -2,7 +2,6 @@ import { FileText, Check, RotateCcw } from "lucide-react";
 
 type HeaderProps = {
     currentStep: number;
-    // onUploadClick: () => void;
     onReset: () => void;
 };
 
@@ -15,10 +14,6 @@ const navItems = [
         label: "Upload Excel",
         id: "upload-excel",
     },
-    // {
-    //     label: "Mapping",
-    //     id: "mapping",
-    // },
     {
         label: "Generate",
         id: "generate",

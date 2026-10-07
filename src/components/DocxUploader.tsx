@@ -8,6 +8,7 @@ import { tokensToText } from '../lib/tokenToText';
 import { parsePlaceholders } from '../lib/parsePlaceholders';
 import toast from "react-hot-toast";
 import PlaceholderModal from './PlaceholderModal';
+import { getEmbedder } from '../lib/embeddingEngine';
 
 interface Props {
     onTemplateLoaded: (
@@ -37,9 +38,11 @@ const DocxUploader = ({ onTemplateLoaded }: Props) => {
         });
 
         const buffer = await readDocx(file);
-        console.log("Buffer :", buffer)
+        // console.log("Buffer :", buffer)
         const zip = openDocx(buffer);
+        // console.log("Zip :", zip)
         const xml = getDocumentXml(zip)!;
+        // console.log("XML :", xml)
 
         // console.log(xml.includes("{Job Title}"));
         // console.log(xml.includes("{Employee Name}"));
@@ -49,15 +52,20 @@ const DocxUploader = ({ onTemplateLoaded }: Props) => {
         // console.log(xml.slice(index - 100, index + 100));
 
         const xmlTokens = tokenizeXml(xml);
+        // console.log("xmlTokens :", xmlTokens)
         const text = tokensToText(xmlTokens);
+        // console.log("Text :", text);
         const lexerTokens = lexer(text);
-        console.log("lexerTokens: ", lexerTokens)
+        // console.log("lexerTokens: ", lexerTokens)
         const placeholders = parsePlaceholders(lexerTokens);
-        // console.log("placeholders :", placeholders)
+        // console.log("placeholders :", placeholders);
 
         setPlaceholders(placeholders);
 
         onTemplateLoaded(buffer, placeholders);
+        getEmbedder().catch((err) => {
+            console.warn("Model preload failed, will retry when needed:", err)
+        })
     };
 
     return (

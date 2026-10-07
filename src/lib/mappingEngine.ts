@@ -15,6 +15,8 @@ export const autoMap = (
       placeholder: placeholder.name,
       column,
       matched: column !== null,
+      confidence: column !== null ? 1 : 0,
+      source: column !== null ? "exact" : "none",
     };
   });
 };

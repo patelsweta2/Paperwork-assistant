@@ -14,7 +14,7 @@ type Params = {
   mappings: PlaceholderMapping[];
 };
 
-export const useDocxGenerator = () => {
+export const useDocXGenerator = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
   const [generatedZip, setGeneratedZip] = useState<Blob | null>(null);

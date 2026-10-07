@@ -42,7 +42,7 @@ interface HeroProps {
 
 const Hero = ({ onCtaClick }: HeroProps) => {
     const sectionRef = useRef(null);
-    const isInView = useInView(sectionRef, { once: false, amount: 0.4 }); // 👈 once: false = replay enabled
+    const isInView = useInView(sectionRef, { once: false, amount: 0.4 }); //  once: false = replay enabled
 
     const outputText =
         "Dear Sweta, thank you for joining Acme Co. Effective Aug 2.";

@@ -2,7 +2,6 @@ import Header from './../src/components/header/Header';
 type AppLayoutProps = {
   currentStep: number;
   children: React.ReactNode;
-  // onUploadClick: () => void;
   onReset: () => void;
 };
 
@@ -14,7 +13,6 @@ export default function AppLayout({
   return (
     <>
       <Header currentStep={currentStep} onReset={onReset}/>
-
       <main className="mx-auto max-w-6xl px-8 py-8">
         {children}
       </main>

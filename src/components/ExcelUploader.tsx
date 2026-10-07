@@ -7,9 +7,15 @@ import toast from "react-hot-toast";
 interface Props {
     hasTemplate: boolean;
     onExcelLoaded: (rows: ExcelRow[], headers: string[]) => void;
+    onReviewMapping?: () => void;
+    isMappingReady?: boolean;
+    unmatchedCount?: number;
+    isMatching: boolean;
 }
 
-const ExcelUploader = ({ hasTemplate, onExcelLoaded }: Props) => {
+const ExcelUploader = ({ hasTemplate, onExcelLoaded, onReviewMapping,
+    isMappingReady,
+    unmatchedCount = 0,isMatching }: Props) => {
     const [excel, setExcel] = useState<ExcelFile | null>(null);
 
     const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,13 +104,31 @@ const ExcelUploader = ({ hasTemplate, onExcelLoaded }: Props) => {
                         </p>
                     </div>
 
-                    <div className="mt-4">
+                    <div className="mt-4 flex items-center justify-between gap-3">
                         <label
                             htmlFor="excel-upload"
                             className="cursor-pointer font-mono text-xs text-[#6B7280] underline hover:text-[#1A2B4C]"
                         >
                             Replace file
                         </label>
+                        {isMatching ? (<p className="flex items-center gap-2 font-mono text-xs text-[#6B7280]">
+                            <span className="h-3 w-3 animate-spin rounded-full border-2 border-[#1A2B4C]/30 border-t-[#1A2B4C]" />
+                            Analyzing fields...
+                        </p>) :
+                        (isMappingReady && onReviewMapping && (
+                            <button
+                                type="button"
+                                onClick={onReviewMapping}
+                                className="flex items-center gap-1.5 rounded-md border border-[#1A2B4C]/20 px-3 py-1.5 font-mono text-xs text-[#1A2B4C] transition hover:bg-[#1A2B4C]/5"
+                            >
+                                Review Mapping
+                                {unmatchedCount > 0 && (
+                                    <span className="rounded-full bg-[#E8A33D]/20 px-1.5 py-0.5 text-[#E8A33D]">
+                                        {unmatchedCount}
+                                    </span>
+                                )}
+                            </button>
+                        ) )}
                     </div>
                 </div>
             )}
