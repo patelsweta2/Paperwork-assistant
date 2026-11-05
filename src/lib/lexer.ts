@@ -1,76 +1,66 @@
-import type { LexerToken } from "../type/document";
+import type { LexerToken, PlaceholderPattern } from "../type/document";
 import { PLACEHOLDER_PATTERNS } from "../constants/placeholderPatterns";
-import type { PlaceholderPattern } from "../type/document";
+
+const SORTED_PATTERNS = [...PLACEHOLDER_PATTERNS].sort(
+  (a, b) => b.start.length - a.start.length
+);
 
 const findMatchingPattern = (
-    text: string,
-    index: number,
-    patterns: PlaceholderPattern[]
-): PlaceholderPattern | null => {
-
-    for (const pattern of patterns) {
-
-        if (
-            text.startsWith(
-                pattern.start,
-                index
-            )
-        ) {
-            return pattern;
-        }
-    }
-    return null;
-}
+  text: string,
+  index: number,
+  patterns: PlaceholderPattern[]
+): PlaceholderPattern | null =>
+  patterns.find((p) => text.startsWith(p.start, index)) ?? null;
 
 export const lexer = (text: string): LexerToken[] => {
   const tokens: LexerToken[] = [];
   let buffer = "";
   let i = 0;
+
+  const flushBuffer = () => {
+    if (buffer) {
+      tokens.push({ type: "TEXT", value: buffer });
+      buffer = "";
+    }
+  };
+
   while (i < text.length) {
-    const pattern = findMatchingPattern(text, i, PLACEHOLDER_PATTERNS);
+    const pattern = findMatchingPattern(text, i, SORTED_PATTERNS);
 
-    if (pattern) {
-      if (buffer) {
-        tokens.push({
-          type: "TEXT",
-          value: buffer,
-        });
-
-        buffer = "";
-      }
-
-      i += pattern.start.length;
-
-      let placeholder = "";
-
-      while (i < text.length && !text.startsWith(pattern.end, i)) {
-        placeholder += text[i];
-
-        i++;
-      }
-
-      tokens.push({
-        type: "PLACEHOLDER",
-        value: placeholder,
-        patternType: pattern.type,
-      });
-
-      i += pattern.end.length;
-
+    if (!pattern) {
+      buffer += text[i];
+      i++;
       continue;
     }
 
-    buffer += text[i];
+    const contentStart = i + pattern.start.length;
+    const endIdx = text.indexOf(pattern.end, contentStart);
 
-    i++;
-  }
+    if (endIdx === -1) {
+      buffer += pattern.start;
+      i = contentStart;
+      continue;
+    }
 
-  if (buffer) {
+    const name = text.slice(contentStart, endIdx).trim();
+
+    // Empty placeholder ({}, {{ }}) → normal text
+    if (!name) {
+      buffer += text.slice(i, endIdx + pattern.end.length);
+      i = endIdx + pattern.end.length;
+      continue;
+    }
+
+    flushBuffer();
     tokens.push({
-      type: "TEXT",
-      value: buffer,
+      type: "PLACEHOLDER",
+      value: name,
+      patternType: pattern.type,
     });
+
+    i = endIdx + pattern.end.length;
   }
 
+  flushBuffer();
   return tokens;
 };

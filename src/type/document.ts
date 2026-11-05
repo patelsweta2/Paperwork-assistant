@@ -63,7 +63,7 @@ export interface ExcelRow {
   [key: string]: string | number | boolean | null;
 }
 
-export type MatchSource = "exact" | "ai" | "manual" | "none";
+export type MatchSource = "exact" | "ai" | "manual" | "fuzzy" | "none";
 export interface PlaceholderMapping {
   placeholder: string;
   column: string | null;
@@ -76,3 +76,4 @@ export type Mapping = {
   placeholder: string;
   header: string;
 };
+

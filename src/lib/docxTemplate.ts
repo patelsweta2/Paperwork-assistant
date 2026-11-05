@@ -11,5 +11,3 @@ export const createTemplate = (zip: PizZip) => {
     },
   });
 };
-
-

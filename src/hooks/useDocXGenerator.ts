@@ -3,7 +3,9 @@ import { saveAs } from "file-saver";
 import JSZip from "jszip";
 import type { ExcelRow, PlaceholderMapping } from "../type/document"; // 👈 Mapping → PlaceholderMapping
 import { normalizePlaceholders, openDocx } from "../lib/docxParser";
-import { createTemplate } from "../lib/docxTemplate";
+import {
+  createTemplate
+} from "../lib/docxTemplate";
 import { buildReplacementMap } from "../lib/replacementEngine";
 import { MAX_ROWS } from "../constants/placeholderPatterns";
 import toast from "react-hot-toast";
@@ -19,7 +21,11 @@ export const useDocXGenerator = () => {
   const [progress, setProgress] = useState({ current: 0, total: 0 });
   const [generatedZip, setGeneratedZip] = useState<Blob | null>(null);
 
-  const generate = async ({ templateBuffer, rows, mappings }: Params): Promise<boolean> => {
+  const generate = async ({
+    templateBuffer,
+    rows,
+    mappings,
+  }: Params): Promise<boolean> => {
     if (!templateBuffer) {
       toast.error("Please upload a DOCX template.");
       return false;
@@ -34,7 +40,7 @@ export const useDocXGenerator = () => {
     }
 
     setIsGenerating(true);
-    setProgress({ current: 0, total: rows.length }); 
+    setProgress({ current: 0, total: rows.length });
     setGeneratedZip(null);
 
     try {
@@ -47,6 +53,7 @@ export const useDocXGenerator = () => {
         const replacementMap = buildReplacementMap(mappings, row);
 
         freshDoc.render(replacementMap);
+
         const blob = freshDoc.getZip().generate({
           type: "blob",
           mimeType:
@@ -59,14 +66,16 @@ export const useDocXGenerator = () => {
         const fileBuffer = await blob.arrayBuffer();
         bundleZip.file(fileName, fileBuffer);
 
-        setProgress({ current: index + 1, total: rows.length }); 
+        setProgress({ current: index + 1, total: rows.length });
 
         await new Promise((resolve) => setTimeout(resolve, 30));
       }
 
       const finalZip = await bundleZip.generateAsync({ type: "blob" });
       setGeneratedZip(finalZip);
-      toast.success(`${rows.length} document${rows.length > 1 ? "s" : ""} ready to download!`);
+      toast.success(
+        `${rows.length} document${rows.length > 1 ? "s" : ""} ready to download!`,
+      );
       return true;
     } catch (error) {
       console.error("Generation Error:", error);
@@ -74,17 +83,17 @@ export const useDocXGenerator = () => {
       return false;
     } finally {
       setIsGenerating(false);
-      setProgress({ current: 0, total: 0 }); 
+      setProgress({ current: 0, total: 0 });
     }
   };
   const download = () => {
     if (!generatedZip) return;
-    saveAs(generatedZip, "generated_documents.zip"); 
+    saveAs(generatedZip, "generated_documents.zip");
   };
-    const reset = () => {          
+  const reset = () => {
     setGeneratedZip(null);
     setProgress({ current: 0, total: 0 });
     setIsGenerating(false);
   };
-  return { generate, download, isGenerating, progress, generatedZip,reset }; 
+  return { generate, download, isGenerating, progress, generatedZip, reset };
 };

@@ -14,7 +14,8 @@ const PlaceholderModal = ({ isOpen, onClose, placeholders }: Props) => {
     };
 
     const handleCopyAll = () => {
-        navigator.clipboard.writeText(placeholders.map((p) => p.name).join("\n"));
+        const uniqueNames = [...new Set(placeholders.map((p) => p.name))];
+        navigator.clipboard.writeText(uniqueNames.join("\t"));
     };
 
     const handleDownloadCsv = () => {

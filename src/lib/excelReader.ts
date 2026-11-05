@@ -19,6 +19,9 @@ export const getFirstSheet = (workbook: XLSX.WorkBook) => {
 };
 
 // Sheet --> JSON
-export const sheetToJson = (sheet: XLSX.WorkSheet) => {
-  return XLSX.utils.sheet_to_json<ExcelRow>(sheet);
+export const sheetToJson = (sheet: XLSX.WorkSheet): ExcelRow[] => {
+  return XLSX.utils.sheet_to_json<ExcelRow>(sheet, {
+    raw: false,   // date will be in text format
+    defval: "",   
+  });
 };
